@@ -19,9 +19,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Rajatm544/MERN-Ecommerce.git"
+    "url": "git+https://github.com/eminshamshoian/comp424-auth"
   },
-  "author": "Rajat M",
+  "author": "Emin Shamshoian",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/Rajatm544/MERN-Ecommerce/issues"
