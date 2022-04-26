@@ -17,13 +17,12 @@ const sendMail = async (id, email, option) => {
 		const mailOptions = {
 			from: process.env.EMAIL, // sender address
 			to: email,
-			subject: 'Confirm your email for Kosells', // Subject line
+			subject: 'Confirm Your Email To Get Access To COMP 424', // Subject line
 			html: `<div>
-					<h2>Account Created!</h2>
-					Click this link to 
+					By clicking the following account you will
 					<a href="${url}">verify your account</a>
 					<br>
-					Note that this link is valid only for the next 15 minutes.
+					Valid for only 15 mins!!
 				</div>
 				
 			`,
@@ -51,14 +50,13 @@ const sendMail = async (id, email, option) => {
 		const mailOptions = {
 			from: process.env.EMAIL, // sender address
 			to: email,
-			subject: 'Reset Password for Kosells', // Subject line
+			subject: 'Reset Password for COMP 424', // Subject line
 			html: `<div>
-					<h2>Reset Password for your Kosells account</h2>
 					<br/>
-					Forgot your password? No worries! Just click this link to 
+					If you requested a forgot password email, click the link to
 					<a href="${url}">reset your password</a>. 
 					<br>
-					Note that this link is valid for only the next 10 minutes. 
+					Valid for only 10 mins!!
 				</div>
 				
 			`,
