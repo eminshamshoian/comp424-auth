@@ -1,7 +1,7 @@
 {
-  "name": "mern-ecommerce-app",
+  "name": "mern-auth",
   "version": "1.0.0",
-  "description": "MERN stack E-commerce app",
+  "description": "COMP 424 Auth",
   "main": "server.js",
   "type": "module",
   "engines": {
@@ -24,9 +24,9 @@
   "author": "Emin Shamshoian",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Rajatm544/MERN-Ecommerce/issues"
+    "url": "https://github.com/eminshamshoian/comp424-auth/issues"
   },
-  "homepage": "https://github.com/Rajatm544/MERN-Ecommerce#readme",
+  "homepage": "https://github.com/eminshamshoian/comp424-auth",
   "dependencies": {
     "aws-sdk": "^2.983.0",
     "bcryptjs": "^2.4.3",
