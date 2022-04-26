@@ -12,9 +12,12 @@ const userSchema = mongoose.Schema(
       required: true,
       unique: true,
     },
+    dateOfBirth: {
+      type: Date,
+      trim: true,
+    },
     password: {
       type: String,
-      // required: true,
     },
     isAdmin: {
       type: Boolean,
