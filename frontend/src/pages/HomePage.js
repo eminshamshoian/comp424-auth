@@ -41,8 +41,7 @@ const HomePage = () => {
     <>
       {promptVerfication ? (
         <Message dismissible variant='info' duration={10}>
-          Account Created! Please check your email to verify your account and
-          start shopping.
+          Account Created! Please check your email to verify your account.
         </Message>
       ) : null}
 
@@ -52,7 +51,7 @@ const HomePage = () => {
           <h5>Please Login to View Company Data</h5>
         </>
       )}
-      {userInfo && (
+      {userInfo && userInfo.isConfirmed && (
         <>
           <h1>Welcome {userInfo.name}</h1>
           <p>you have logged in 2 times and your last login was 4/21/2022</p>
