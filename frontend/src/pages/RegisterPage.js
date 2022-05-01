@@ -13,6 +13,7 @@ import Message from "../components/Message";
 import FormContainer from "../components/FormContainer";
 import { registerUser } from "../actions/userActions";
 import "../styles/login-register.css";
+import PasswordStrengthBar from "react-password-strength-bar";
 
 const RegisterPage = ({ location, history }) => {
   const [typePassword, setTypePassword] = useState("password");
@@ -156,6 +157,7 @@ const RegisterPage = ({ location, history }) => {
                     }}
                     onChange={(e) => setPassword(e.target.value)}
                   />
+
                   <div className='input-group-append'>
                     <InputGroup.Text
                       onClick={showHidePassword}
@@ -177,6 +179,7 @@ const RegisterPage = ({ location, history }) => {
                 </FloatingLabel>
               </InputGroup>
             </Form.Group>
+            <PasswordStrengthBar password={password} />
             <Form.Group>
               <InputGroup>
                 <FloatingLabel

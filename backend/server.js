@@ -7,6 +7,9 @@ import cors from "cors"; // allow cross origin requests
 import cookieSession from "cookie-session"; // for implementing cookie sessions for passport
 import path from "path";
 
+// XSS Attack Protection
+import xss from "xss-clean";
+
 // middleware
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 
@@ -18,12 +21,14 @@ const app = express();
 // use morgan in development mode
 if (process.env.NODE_ENV === "development") app.use(morgan("dev"));
 
-// connect to the mongoDB database
+// connect to the mongoDB databases
 connectDB();
 
-app.use(express.json()); // middleware to use req.body
-app.use(cors()); // to avoid CORS errors
-app.use(compression()); // to use gzip
+/* make sure this comes before any routes */
+app.use(xss());
+app.use(express.json());
+app.use(cors());
+app.use(compression());
 
 // use cookie sessions
 app.use(
