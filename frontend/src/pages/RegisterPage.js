@@ -14,6 +14,7 @@ import FormContainer from "../components/FormContainer";
 import { registerUser } from "../actions/userActions";
 import "../styles/login-register.css";
 import PasswordStrengthBar from "react-password-strength-bar";
+import ReCAPTCHA from "react-google-recaptcha";
 
 const RegisterPage = ({ location, history }) => {
   const [typePassword, setTypePassword] = useState("password");
@@ -26,6 +27,13 @@ const RegisterPage = ({ location, history }) => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState(null);
   const dispatch = useDispatch();
+  const [disable, setDisable] = React.useState(true);
+
+  const recaptchaRef = React.createRef();
+  function onChange(value) {
+    console.log("Captcha value:", value);
+    setDisable(false);
+  }
 
   const redirect = location.search ? location.search.split("=")[1] : "";
   const userRegister = useSelector((state) => state.userRegister);
@@ -225,6 +233,11 @@ const RegisterPage = ({ location, history }) => {
                   display: "flex",
                 }}
               >
+                <ReCAPTCHA
+                  ref={recaptchaRef}
+                  sitekey='6LenxLwfAAAAAB4gKi11spZB6g2P4llo-U4atuE0'
+                  onChange={onChange}
+                />
                 <Button
                   type='submit'
                   className='ms-auto'
@@ -232,6 +245,8 @@ const RegisterPage = ({ location, history }) => {
                     padding: "0.5em 1em",
                     width: "8rem",
                   }}
+                  disabled={disable}
+                  onClick={() => setDisable(false)}
                 >
                   Register
                 </Button>

@@ -262,7 +262,6 @@ const LoginPage = ({ location, history }) => {
                       sitekey='6LenxLwfAAAAAB4gKi11spZB6g2P4llo-U4atuE0'
                       onChange={onChange}
                     />
-                    ,
                     <Button
                       type='submit'
                       className='ms-auto'
