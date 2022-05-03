@@ -47,7 +47,7 @@ const ConfirmPage = ({ match, history }) => {
     localStorage.setItem("fillEmailOnLoginPage", "true");
     return (
       <Card style={{ border: "none", margin: "0 auto" }}>
-        <Meta title='Confirm Password | Kosells' />
+        <Meta title='Confirm Password | Comp 424' />
         <Card.Body>
           <Card.Title>Account Confirmed</Card.Title>
           <Card.Text>
