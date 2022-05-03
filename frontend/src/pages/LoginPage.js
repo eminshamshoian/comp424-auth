@@ -15,7 +15,7 @@ import Loader from "../components/Loader";
 import Message from "../components/Message";
 import FormContainer from "../components/FormContainer";
 import "../styles/login-register.css";
-import { GoogleReCaptchaProvider } from "react-google-recaptcha-v3";
+import ReCAPTCHA from "react-google-recaptcha";
 
 const LoginPage = ({ location, history }) => {
   const [showRedirectMsg, setShowRedirectMsg] = useState(false);
@@ -136,6 +136,10 @@ const LoginPage = ({ location, history }) => {
       localStorage.setItem("EcommerceUserName", data.name); // store the user name, so that we can use it in the profile page to ask them to confirm email
     }
   };
+
+  function onChange(value) {
+    console.log("Captcha value:", value);
+  }
 
   // there are 2 sorts of forms to be shown, one when resetting password, and other when normal login
   if (!forgotPassword) {
@@ -332,14 +336,9 @@ const LoginPage = ({ location, history }) => {
                   >
                     I remember my password
                   </Button>
-                  <GoogleReCaptchaProvider
-                    reCaptchaKey='6LdeibwfAAAAAKzYkKfvncVQsNR4B9bv_VzF7oiQ'
-                    scriptProps={{
-                      async: false, // optional, default to false,
-                      defer: false, // optional, default to false
-                      appendTo: "head", // optional, default to "head", can be "head" or "body",
-                      nonce: undefined, // optional, default undefined
-                    }}
+                  <ReCAPTCHA
+                    sitekey='6LdeibwfAAAAAKzYkKfvncVQsNR4B9bv_VzF7oiQ'
+                    onChange={onChange}
                   />
                   <Button
                     type='submit'
