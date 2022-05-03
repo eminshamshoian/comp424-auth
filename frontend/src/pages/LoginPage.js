@@ -15,7 +15,7 @@ import Loader from "../components/Loader";
 import Message from "../components/Message";
 import FormContainer from "../components/FormContainer";
 import "../styles/login-register.css";
-import Recaptcha from "react-recaptcha-that-works";
+import ReCAPTCHA from "react-google-recaptcha";
 
 const LoginPage = ({ location, history }) => {
   const [showRedirectMsg, setShowRedirectMsg] = useState(false);
@@ -31,6 +31,14 @@ const LoginPage = ({ location, history }) => {
   const userLogin = useSelector((state) => state.userLogin);
   const { loading, userInfo, error } = userLogin;
   const storedInfo = JSON.parse(localStorage.getItem("userInfo"));
+  const [disable, setDisable] = React.useState(true);
+
+  const recaptchaRef = React.createRef();
+
+  function onChange(value) {
+    console.log("Captcha value:", value);
+    setDisable(false);
+  }
 
   useEffect(() => {
     if (!location.search.includes("success") && userInfo)
@@ -249,7 +257,12 @@ const LoginPage = ({ location, history }) => {
                     >
                       Forgot Password?
                     </Button>
-                    <Recaptcha siteKey='6LdeibwfAAAAAKzYkKfvncVQsNR4B9bv_VzF7oiQ' />
+                    <ReCAPTCHA
+                      ref={recaptchaRef}
+                      sitekey='6LenxLwfAAAAAB4gKi11spZB6g2P4llo-U4atuE0'
+                      onChange={onChange}
+                    />
+                    ,
                     <Button
                       type='submit'
                       className='ms-auto'
@@ -257,6 +270,8 @@ const LoginPage = ({ location, history }) => {
                         padding: "0.5em 1em",
                         width: "8rem",
                       }}
+                      disabled={disable}
+                      onClick={() => setDisable(false)}
                     >
                       Login
                     </Button>
