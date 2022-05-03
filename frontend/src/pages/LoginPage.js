@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   Form,
@@ -15,7 +15,7 @@ import Loader from "../components/Loader";
 import Message from "../components/Message";
 import FormContainer from "../components/FormContainer";
 import "../styles/login-register.css";
-import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
+import Recaptcha from "react-recaptcha-that-works";
 
 const LoginPage = ({ location, history }) => {
   const [showRedirectMsg, setShowRedirectMsg] = useState(false);
@@ -31,26 +31,6 @@ const LoginPage = ({ location, history }) => {
   const userLogin = useSelector((state) => state.userLogin);
   const { loading, userInfo, error } = userLogin;
   const storedInfo = JSON.parse(localStorage.getItem("userInfo"));
-
-  const { executeRecaptcha } = useGoogleReCaptcha();
-
-  // Create an event handler so you can call the verification on button click event or form submit
-  const handleReCaptchaVerify = useCallback(async () => {
-    if (!executeRecaptcha) {
-      console.log("Execute recaptcha not yet available");
-      return;
-    }
-
-    // eslint-disable-next-line
-    const token = await executeRecaptcha("yourAction");
-    // Do whatever you want with the token
-    // eslint-disable-next-line
-  }, []);
-
-  // You can use useEffect to trigger the verification as soon as the component being loaded
-  useEffect(() => {
-    handleReCaptchaVerify();
-  }, [handleReCaptchaVerify]);
 
   useEffect(() => {
     if (!location.search.includes("success") && userInfo)
@@ -269,6 +249,7 @@ const LoginPage = ({ location, history }) => {
                     >
                       Forgot Password?
                     </Button>
+                    <Recaptcha siteKey='6LdeibwfAAAAAKzYkKfvncVQsNR4B9bv_VzF7oiQ' />
                     <Button
                       type='submit'
                       className='ms-auto'
