@@ -10,6 +10,9 @@ import path from "path";
 // XSS Attack Protection
 import xss from "xss-clean";
 
+// SQL Attacks Protection
+import mongoSanitize from "express-mongo-sanitize";
+
 // middleware
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 
@@ -29,6 +32,7 @@ app.use(xss());
 app.use(express.json());
 app.use(cors());
 app.use(compression());
+app.use(mongoSanitize());
 
 // use cookie sessions
 app.use(
