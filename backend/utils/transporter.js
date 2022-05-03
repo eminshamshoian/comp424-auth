@@ -5,8 +5,6 @@ dotenv.config();
 // configure the transporter for nodemailer to use gmail account to send mails
 const transporter = nodemailer.createTransport({
   service: "gmail",
-  port: 465,
-  secure: false,
   auth: {
     type: "OAuth2",
     user: process.env.MAIL_USERNAME,

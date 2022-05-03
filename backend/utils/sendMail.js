@@ -5,7 +5,7 @@ import generateToken from "../utils/generateToken.js";
 dotenv.config();
 
 const sendMail = async (id, email, option) => {
-  const frontendURL = "http://424project.pw";
+  const frontendURL = process.env.FRONTEND_BASE_URL;
 
   // send email for the email verification option
   if (option === "email verification") {
