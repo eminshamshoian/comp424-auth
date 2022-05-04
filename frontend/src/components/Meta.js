@@ -12,8 +12,8 @@ const Meta = ({ title, description, keywords }) => {
 };
 
 Meta.defaultProps = {
-	title: 'Welcome to Kosells',
-	keywords: 'Electronics, Kosells, Ecommerce, Rajat',
-	description: 'Buy the best products at the lowest prices',
+	title: 'Welcome to COMP 424',
+	keywords: 'Authentication, Security, Computer Science',
+	description: 'Security Project for COMP 424',
 };
 export default Meta;
