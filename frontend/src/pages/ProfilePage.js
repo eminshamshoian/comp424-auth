@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
 import {
   Form,
   Button,
@@ -8,11 +7,9 @@ import {
   InputGroup,
   Col,
   Card,
-  Table,
   Image,
   FloatingLabel,
 } from "react-bootstrap";
-import { LinkContainer } from "react-router-bootstrap";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
 import {
@@ -24,12 +21,11 @@ import {
 import { USER_PROFILE_UPDATE_RESET } from "../constants/userConstants";
 import Meta from "../components/Meta";
 import axios from "axios";
-import getDateString from "../utils/getDateString";
 import "../styles/profile-page.css";
 
 const ProfilePage = ({ history }) => {
   const inputFile = useRef(null);
-  const [showSubmitButton, setShowSubmitButton] = useState(false); // sisable the submit button unless some user detail is changed by user
+  const [showSubmitButton, setShowSubmitButton] = useState(false);
   const [typePassword, setTypePassword] = useState("password");
   const [typeConfirmPassword, setTypeConfirmPassword] = useState("password");
 
@@ -39,7 +35,6 @@ const ProfilePage = ({ history }) => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState(null);
-  const [allOrders, setAllOrders] = useState([]);
 
   const [uploading, setUploading] = useState(false);
   const [errorImageUpload, setErrorImageUpload] = useState("");
@@ -54,20 +49,11 @@ const ProfilePage = ({ history }) => {
   const userProfileUpdate = useSelector((state) => state.userProfileUpdate);
   const { success } = userProfileUpdate;
 
-  const orderListUser = useSelector((state) => state.orderListUser);
-  const {
-    loading: loadingOrdersList,
-    orders,
-    error: errorOrdersList,
-  } = orderListUser;
-
-  // check whether verification email has to be sent
   const userSendEmailVerfication = useSelector(
     (state) => state.userSendEmailVerfication
   );
   const { emailSent, hasError } = userSendEmailVerfication;
 
-  // refresh access token for user details error
   useEffect(() => {
     if (error && userInfo && !userInfo.isSocialLogin) {
       const user = JSON.parse(localStorage.getItem("userInfo"));
@@ -75,14 +61,6 @@ const ProfilePage = ({ history }) => {
     }
   }, [error, dispatch, userInfo]);
 
-  // set orders to local state
-  useEffect(() => {
-    if (orders && orders.length) {
-      setAllOrders([...orders]);
-    }
-  }, [orders]);
-
-  // check if any of the input fields value is changed, only then show the submit button
   useEffect(() => {
     if (userInfo) {
       if (name && userInfo.name !== name) setShowSubmitButton(true);
@@ -96,7 +74,6 @@ const ProfilePage = ({ history }) => {
     if (!userInfo) {
       history.push("/login");
     } else {
-      // if user is null, first fetch it and then set its details to the local state
       if (!user || !user.name || success) {
         dispatch({ type: USER_PROFILE_UPDATE_RESET });
         userInfo
@@ -115,7 +92,7 @@ const ProfilePage = ({ history }) => {
         setAvatar(user.avatar);
       }
     }
-  }, [history, userInfo, user, dispatch, success, loadingOrdersList]);
+  }, [history, userInfo, user, dispatch, success]);
 
   const showHidePassword = (e) => {
     e.preventDefault();
@@ -131,7 +108,6 @@ const ProfilePage = ({ history }) => {
     );
   };
 
-  // handle file upload to aws bucket
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     const formData = new FormData();
@@ -159,12 +135,10 @@ const ProfilePage = ({ history }) => {
     }
   };
 
-  // handle image overlay div's click to upload new file
   const handleImageClick = () => {
     inputFile.current.click();
   };
 
-  // update user details
   const handleSubmit = (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
@@ -286,7 +260,6 @@ const ProfilePage = ({ history }) => {
                 </div>
               </div>
             )}
-            {/* for image upload */}
             <input
               type='file'
               accept='image/*'
@@ -433,116 +406,6 @@ const ProfilePage = ({ history }) => {
               </div>
             </Form>
           </div>
-        )}
-      </Col>
-      {/* display orders */}
-      <Col
-        md={9}
-        style={
-          userInfo && !userInfo.isConfirmed
-            ? {
-                opacity: "0.5",
-                pointerEvents: "none",
-              }
-            : {
-                opacity: "1",
-                pointerEvents: "",
-              }
-        }
-      >
-        {allOrders.length ? (
-          <>
-            <h2 className='text-center'>My Orders</h2>
-            {loadingOrdersList ? (
-              <Loader />
-            ) : errorOrdersList ? (
-              <Message dismissible variant='danger' duration={10}>
-                {errorOrdersList}
-              </Message>
-            ) : (
-              <Table
-                striped
-                bordered
-                responsive
-                className='table-sm text-center'
-              >
-                <thead>
-                  <tr>
-                    <th>DATE</th>
-                    <th>TOTAL</th>
-                    <th>PAID</th>
-                    <th>DELIVERED</th>
-                    <th>ACTION</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {orders.map((order, idx) => (
-                    <tr
-                      key={idx}
-                      style={{
-                        textAlign: "center",
-                        padding: "0",
-                      }}
-                    >
-                      <td>{getDateString(order.createdAt)}</td>
-                      <td>
-                        {order.totalPrice.toLocaleString("en-IN", {
-                          maximumFractionDigits: 0,
-                          style: "currency",
-                          currency: "INR",
-                        })}
-                      </td>
-                      <td>
-                        {order.isPaid ? (
-                          getDateString(order.paidAt)
-                        ) : (
-                          <i
-                            className='fas fa-times'
-                            style={{
-                              color: "red",
-                            }}
-                          />
-                        )}
-                      </td>
-                      <td>
-                        {order.isDelivered ? (
-                          getDateString(order.deliveredAt)
-                        ) : (
-                          <i
-                            className='fas fa-times'
-                            style={{
-                              color: "red",
-                            }}
-                          />
-                        )}
-                      </td>
-                      <td>
-                        <LinkContainer to={`/order/${order._id}`}>
-                          <Button
-                            variant='link'
-                            className='btn-sm'
-                            style={{ margin: "0" }}
-                          >
-                            Details
-                          </Button>
-                        </LinkContainer>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </Table>
-            )}
-          </>
-        ) : (
-          <Card style={{ border: "none", margin: "0 auto" }}>
-            <Card.Body>
-              <Card.Title>No Orders Yet!</Card.Title>
-              <Card.Text>
-                Details about all your orders will show up here.{" "}
-                <Link to='/'>Continue Shopping</Link>
-              </Card.Text>
-            </Card.Body>
-          </Card>
         )}
       </Col>
     </Row>

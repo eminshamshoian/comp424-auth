@@ -6,24 +6,16 @@ import sendMail from "../utils/sendMail.js";
 import generateGravatar from "../utils/generateGravatar.js";
 import jwt from "jsonwebtoken";
 
-// @desc Get all the users info
-// @route GET /api/users
-// @access PRIVATE/ADMIN
 const getAllUsers = asyncHandler(async (req, res) => {
-  const page = Number(req.query.pageNumber) || 1; // the current page number in the pagination
-  const pageSize = 20; // total number of entries on a single page
-  const count = await User.countDocuments({}); // total number of documents available
-  // const count = await Order.countDocuments({}); // total number of documents available
+  const page = Number(req.query.pageNumber) || 1;
+  const pageSize = 20;
+  const count = await User.countDocuments({});
 
-  // find all orders that need to be sent for the current page, by skipping the documents included in the previous pages
-  // and limiting the number of documents included in this request
-  // sort this in desc order that the document was created at
   const allUsers = await User.find({})
     .limit(pageSize)
     .skip(pageSize * (page - 1))
     .sort("-createdAt");
 
-  // send the list of orders, current page number, total number of pages available
   res.json({
     users: allUsers,
     page,
@@ -32,9 +24,6 @@ const getAllUsers = asyncHandler(async (req, res) => {
   });
 });
 
-// @desc Delete a user
-// @route DELETE /api/users/:id
-// @access PRIVATE/ADMIN
 const deleteUser = asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id);
   if (user) {
@@ -48,9 +37,6 @@ const deleteUser = asyncHandler(async (req, res) => {
   }
 });
 
-// @desc get user by ID
-// @route GET /api/users/:id
-// @access PRIVATE/ADMIN
 const getUserById = asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id).select("-password");
   if (user) res.json(user);
@@ -60,14 +46,9 @@ const getUserById = asyncHandler(async (req, res) => {
   }
 });
 
-// @desc update user from the admin panel
-// @route PUT /api/users/:id
-// @access PRIVATE/ADMIN
 const updateUser = asyncHandler(async (req, res) => {
-  // do not include the hashed password when fetching this user
   const user = await User.findById(req.params.id).select("-password");
   if (user) {
-    // update whicever field was sent in the rquest body
     user.name = req.body.name || user.name;
     user.isConfirmed = req.body.email === user.email;
     user.email = req.body.email || user.email;
@@ -88,21 +69,15 @@ const updateUser = asyncHandler(async (req, res) => {
   }
 });
 
-// @desc authenticate user and get token
-// @route POST /api/users/login
-// @access PUBLIC
 const authUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
   let user = await User.findOne({ email });
-  // generate both the access and the refresh tokens
   const accessToken = generateToken(user._id, "access");
   const refreshToken = generateToken(user._id, "refresh");
 
-  // if the passwords are matching, then check if a refresh token exists for this user
   if (user && (await user.matchPassword(password))) {
     const existingToken = await Token.findOne({ email });
-    // if no refresh token available, create one and store it in the db
     if (!existingToken) {
       const newToken = await Token.create({
         email,
@@ -129,9 +104,6 @@ const authUser = asyncHandler(async (req, res) => {
   }
 });
 
-// @desc register a new user
-// @route POST /api/users/
-// @access PUBLIC
 const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password, dateOfBirth } = req.body;
 
@@ -142,7 +114,6 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new Error("Email already registered");
   }
 
-  // the gravatar will be unique for each registered email
   const avatar = generateGravatar(email);
 
   const user = await User.create({
@@ -153,9 +124,7 @@ const registerUser = asyncHandler(async (req, res) => {
     avatar,
   });
 
-  // if user was created successfully
   if (user) {
-    // send a mail for email verification of the newly registred email id
     await sendMail(user._id, email, "email verification");
 
     const refreshToken = generateToken(user._id, "refresh");
@@ -176,19 +145,13 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 });
 
-// @desc send a mail with the link to verify mail
-// @route POST /api/users/confirm
-// @access PUBLIC
 const mailForEmailVerification = asyncHandler(async (req, res) => {
   try {
     const { email } = req.body;
 
     const user = await User.findOne({ email });
-    // console.log(user);
     if (user) {
-      // send a verification email, if this user is not a confirmed email
       if (!user.isConfirmed) {
-        // send the mail
         await sendMail(user._id, email, "email verification");
         res.status(201).json({
           id: user._id,
@@ -210,20 +173,13 @@ const mailForEmailVerification = asyncHandler(async (req, res) => {
   }
 });
 
-// @desc send a mail with the link to reset password
-// @route POST /api/users/reset
-// @access PUBLIC
 const mailForPasswordReset = asyncHandler(async (req, res) => {
   try {
     const { email } = req.body;
 
     const user = await User.findOne({ email });
 
-    // send a link to reset password only if it's a confirmed account
     if (user && user.isConfirmed) {
-      // send the mail and return the user details
-
-      // the sendMail util function takes a 3rd argument to indicate what type of mail to send
       await sendMail(user._id, email, "forgot password");
 
       res.status(201).json({
@@ -242,12 +198,8 @@ const mailForPasswordReset = asyncHandler(async (req, res) => {
   }
 });
 
-// @desc reset password of any verified user
-// @route PUT /api/users/reset
-// @access PUBLIC
 const resetUserPassword = asyncHandler(async (req, res) => {
   try {
-    // update the user password if the jwt is verified successfully
     const { passwordToken, password } = req.body;
     const decodedToken = jwt.verify(
       passwordToken,
@@ -278,12 +230,8 @@ const resetUserPassword = asyncHandler(async (req, res) => {
   }
 });
 
-// @desc confirm the email address of the registered user
-// @route GET /api/users/confirm
-// @access PUBLIC
 const confirmUser = asyncHandler(async (req, res) => {
   try {
-    // set the user to a confirmed status, once the corresponding JWT is verified correctly
     const emailToken = req.params.token;
     const decodedToken = jwt.verify(
       emailToken,
@@ -292,7 +240,7 @@ const confirmUser = asyncHandler(async (req, res) => {
     const user = await User.findById(decodedToken.id).select("-password");
     user.isConfirmed = true;
     const updatedUser = await user.save();
-    const foundToken = await Token.findOne({ email: updatedUser.email }); // send the refresh token that was stored
+    const foundToken = await Token.findOne({ email: updatedUser.email });
     res.json({
       id: updatedUser._id,
       email: updatedUser.email,
@@ -310,14 +258,9 @@ const confirmUser = asyncHandler(async (req, res) => {
   }
 });
 
-// @desc obtain new access tokens using the refresh tokens
-// @route GET /api/users/refresh
-// @access PUBLIC
 const getAccessToken = asyncHandler(async (req, res) => {
   const refreshToken = req.body.token;
   const email = req.body.email;
-
-  // search if currently loggedin user has the refreshToken sent
   const currentAccessToken = await Token.findOne({ email });
 
   if (!refreshToken || refreshToken !== currentAccessToken.token) {
@@ -325,7 +268,6 @@ const getAccessToken = asyncHandler(async (req, res) => {
     throw new Error("Refresh token not found, login again");
   }
 
-  // If the refresh token is valid, create a new accessToken and return it.
   jwt.verify(
     refreshToken,
     process.env.JWT_REFRESH_TOKEN_SECRET,
@@ -343,9 +285,6 @@ const getAccessToken = asyncHandler(async (req, res) => {
   );
 });
 
-// @desc get user data for google login in the frontend
-// @route POST /api/users/passport/data
-// @access PUBLIC
 const getUserData = asyncHandler(async (req, res) => {
   const { id } = req.body;
   const user = await User.findById(id);
@@ -364,9 +303,6 @@ const getUserData = asyncHandler(async (req, res) => {
   }
 });
 
-// @desc get data for an authenticated user
-// @route GET /api/users/profile
-// @access PRIVATE
 const getUserProfile = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user.id);
   if (user) {
@@ -383,13 +319,9 @@ const getUserProfile = asyncHandler(async (req, res) => {
   }
 });
 
-// @desc update data for an authenticated user
-// @route PUT /api/users/profile
-// @access PRIVATE
 const updateUserProfile = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user.id);
   if (user) {
-    // update whichever field is sent in the req body
     user.name = req.body.name || user.name;
     user.avatar = req.body.avatar || user.avatar;
     if (req.body.email) user.isConfirmed = req.body.email === user.email;
@@ -399,13 +331,6 @@ const updateUserProfile = asyncHandler(async (req, res) => {
     }
 
     const updatedUser = await user.save();
-
-    // check if the current user logged in is with a social account, in which case do not create/find any access or refresh tokens
-    const isSocialLogin =
-      updatedUser.googleID ||
-      updatedUser.linkedinID ||
-      updateUser.githubID ||
-      updatedUser.twitterID;
 
     let updatedUserObj = {
       id: updatedUser._id,
@@ -422,7 +347,6 @@ const updateUserProfile = asyncHandler(async (req, res) => {
         const existingToken = await Token.findOne({
           email: updatedUser.email,
         });
-        // store a new refresh token for this email
         if (existingToken) {
           existingToken.token = refreshToken;
           existingToken.save();
@@ -432,7 +356,6 @@ const updateUserProfile = asyncHandler(async (req, res) => {
             token: refreshToken,
           });
         }
-        // add these two token to the response
         updatedUserObj = {
           ...updatedUserObj,
           accessToken: generateToken(updatedUser._id, "access"),

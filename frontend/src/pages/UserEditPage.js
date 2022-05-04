@@ -33,7 +33,6 @@ const UserEditPage = ({ match, history }) => {
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 
-  // get new access tokens
   useEffect(() => {
     if (error && userInfo && !userInfo.isSocialLogin) {
       const user = JSON.parse(localStorage.getItem("userInfo"));
@@ -41,7 +40,6 @@ const UserEditPage = ({ match, history }) => {
     }
   }, [error, dispatch, userInfo]);
 
-  // update user details from the admin panel view
   useEffect(() => {
     if (successUpdate) {
       dispatch({ type: USER_UPDATE_RESET });

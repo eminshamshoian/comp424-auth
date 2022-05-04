@@ -37,7 +37,6 @@ import {
 } from "../constants/userConstants";
 import axios from "axios";
 
-// login an user, can be a social login or a normal email verified login
 export const loginUser = (email, password) => async (dispatch) => {
   try {
     dispatch({ type: USER_LOGIN_REQUEST });
@@ -62,13 +61,11 @@ export const loginUser = (email, password) => async (dispatch) => {
       type: USER_LOGIN_REFRESH_SUCCESS,
       payload: data.refreshToken,
     });
-    // store the refresh token and the rest of the user info in the local storage
     localStorage.setItem("refreshToken", data.refreshToken);
     localStorage.setItem(
       "userInfo",
       JSON.stringify({ ...data, isSocialLogin: false })
     );
-    // remove the variable that helps prompt the user that email is not verified, each time they login
     localStorage.removeItem("promptEmailVerfication");
   } catch (error) {
     dispatch({
@@ -81,7 +78,6 @@ export const loginUser = (email, password) => async (dispatch) => {
   }
 };
 
-// used for refreshing the access tokens when the user logs in using email and password
 export const refreshLogin = (email) => async (dispatch, getState) => {
   try {
     dispatch({ type: USER_LOGIN_REFRESH_REQUEST });
@@ -89,7 +85,6 @@ export const refreshLogin = (email) => async (dispatch, getState) => {
       userLogin: { userInfo },
     } = getState();
 
-    // avoid this if social login
     if (userInfo.isSocialLogin) {
       dispatch({ type: USER_LOGIN_REFRESH_SUCCESS, payload: null });
     } else {
@@ -115,13 +110,12 @@ export const refreshLogin = (email) => async (dispatch, getState) => {
           accessToken: data.accessToken,
           refreshToken: userInfo.refreshToken,
         };
-        // update the local storage
+
         localStorage.setItem("userInfo", JSON.stringify(updatedUser));
         dispatch({ type: USER_LOGIN_SUCCESS, payload: updatedUser });
       } else if (!data.success) {
-        // set a variable in local storage which redirects to login page, if this refresh thing fails
         localStorage.removeItem("userInfo");
-        localStorage.setItem("redirectLogin", "true"); // after refresh token also expires, redirect to login page after loggin out the user
+        localStorage.setItem("redirectLogin", "true");
         dispatch({ type: USER_LOGOUT });
       }
     }
@@ -136,7 +130,6 @@ export const refreshLogin = (email) => async (dispatch, getState) => {
   }
 };
 
-// logout by removing all local storage info
 export const logoutUser = () => (dispatch) => {
   localStorage.removeItem("userInfo");
   localStorage.removeItem("redirectLogin");
@@ -145,7 +138,6 @@ export const logoutUser = () => (dispatch) => {
   dispatch({ type: USER_DETAILS_RESET });
 };
 
-// register a new user with the form for name, email, password
 export const registerUser = (name, email, password) => async (dispatch) => {
   try {
     dispatch({ type: USER_REGISTER_REQUEST });
@@ -173,7 +165,6 @@ export const registerUser = (name, email, password) => async (dispatch) => {
   }
 };
 
-// send an email for verification of the newly registered account
 export const sendVerficationEmail = (email) => async (dispatch) => {
   try {
     dispatch({ type: USER_EMAIL_VERIFICATION_REQUEST });
@@ -196,7 +187,6 @@ export const sendVerficationEmail = (email) => async (dispatch) => {
   }
 };
 
-// take the email token sent from the mail, and confirm the account once the link is clicked
 export const confirmUser =
   (emailToken, alreadyLoggedIn = false) =>
   async (dispatch, getState) => {
@@ -230,7 +220,6 @@ export const confirmUser =
     }
   };
 
-// reset the user password and send one more verification email from the server
 export const resetUserPassword =
   (passwordToken, password) => async (dispatch) => {
     try {
@@ -261,7 +250,6 @@ export const resetUserPassword =
     }
   };
 
-// get user details for profile page
 export const getUserDetails = (id) => async (dispatch, getState) => {
   try {
     dispatch({ type: USER_DETAILS_REQUEST });
@@ -311,7 +299,6 @@ export const getUserDetails = (id) => async (dispatch, getState) => {
   }
 };
 
-// update details in the user profile page
 export const updateUserProfile = (user) => async (dispatch, getState) => {
   try {
     dispatch({ type: USER_PROFILE_UPDATE_REQUEST });
@@ -320,7 +307,6 @@ export const updateUserProfile = (user) => async (dispatch, getState) => {
       userLogin: { userInfo },
     } = getState();
 
-    // different headers are used when it is a social login, and when it is a std email login
     const config = userInfo.isSocialLogin
       ? {
           headers: {
@@ -362,7 +348,6 @@ export const updateUserProfile = (user) => async (dispatch, getState) => {
   }
 };
 
-// fetch a list of all users, for the admin panel view
 export const listAllUsers =
   (pageNumber = "") =>
   async (dispatch, getState) => {
@@ -403,7 +388,6 @@ export const listAllUsers =
     }
   };
 
-// delete the user from the admin panel view
 export const deleteUser = (id) => async (dispatch, getState) => {
   try {
     dispatch({ type: USER_DELETE_REQUEST });
@@ -412,7 +396,6 @@ export const deleteUser = (id) => async (dispatch, getState) => {
       userLogin: { userInfo },
     } = getState();
 
-    // different headers are used when it is a social login, and when it is a std email login
     const config = userInfo.isSocialLogin
       ? {
           headers: {
@@ -439,7 +422,6 @@ export const deleteUser = (id) => async (dispatch, getState) => {
   }
 };
 
-// update the user details
 export const updateUser = (user) => async (dispatch, getState) => {
   try {
     dispatch({ type: USER_UPDATE_REQUEST });
@@ -472,7 +454,6 @@ export const updateUser = (user) => async (dispatch, getState) => {
     });
 
     if (data.id === userInfo.id) {
-      // // login the user after updating the information
       const newUserInfo = {
         ...userInfo,
         ...userInfo,

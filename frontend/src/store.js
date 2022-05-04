@@ -16,7 +16,6 @@ import {
   userUpdateReducer,
 } from "./reducers/userReducers";
 
-// combine all the above reducers to the store
 const reducer = combineReducers({
   userLogin: userLoginReducer,
   userLoginRefresh: userLoginRefreshReducer,
@@ -31,17 +30,14 @@ const reducer = combineReducers({
   userUpdate: userUpdateReducer,
 });
 
-// get the user info from local storage
 const userInfoFromLocalStorage = localStorage.getItem("userInfo")
   ? JSON.parse(localStorage.getItem("userInfo"))
   : null;
 
-// get refresh token from the local storage
 const tokenInfoFromLocalStoage = localStorage.getItem("refreshToken")
   ? localStorage.getItem("refreshToken")
   : null;
 
-// set the initial state based on above local storage values
 const initialState = {
   userLogin: {
     userInfo: userInfoFromLocalStorage,
@@ -51,10 +47,8 @@ const initialState = {
   },
 };
 
-// user redux thunk for making async calls
 const middleware = [thunk];
 
-// create the redux store
 const store = createStore(
   reducer,
   initialState,

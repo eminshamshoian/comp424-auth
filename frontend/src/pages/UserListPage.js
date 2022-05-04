@@ -7,7 +7,7 @@ import Message from "../components/Message";
 import { listAllUsers, deleteUser, refreshLogin } from "../actions/userActions";
 
 const UserListPage = ({ match, history }) => {
-  const pageNumber = match.params.pageNumber || 1; // to fetch various pages of orders
+  const pageNumber = match.params.pageNumber || 1;
   const dispatch = useDispatch();
   const userList = useSelector((state) => state.userList);
   const { loading, users, error, total } = userList;

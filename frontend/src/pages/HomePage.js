@@ -4,7 +4,7 @@ import { refreshLogin, getUserDetails } from "../actions/userActions";
 import Message from "../components/Message";
 
 const HomePage = () => {
-  const [promptVerfication, setPromptVerification] = useState(false); // prompt user to verify email if not yet confirmed
+  const [promptVerfication, setPromptVerification] = useState(false);
   const dispatch = useDispatch();
 
   const userLogin = useSelector((state) => state.userLogin);
@@ -13,7 +13,6 @@ const HomePage = () => {
   const userDetails = useSelector((state) => state.userDetails);
   const { error: userInfoError } = userDetails;
 
-  // fetch the user details
   useEffect(() => {
     userInfo
       ? userInfo.isSocialLogin
@@ -22,7 +21,6 @@ const HomePage = () => {
       : dispatch(getUserDetails("profile"));
   }, [userInfo, dispatch]);
 
-  // refresh token to get new access token if error in user details
   useEffect(() => {
     if (userInfoError && userInfo && !userInfo.isSocialLogin) {
       const user = JSON.parse(localStorage.getItem("userInfo"));
@@ -30,7 +28,6 @@ const HomePage = () => {
     }
   }, [userInfoError, dispatch, userInfo]);
 
-  // check if user needs to be promted about email verification on page load
   useEffect(() => {
     setPromptVerification(
       localStorage.getItem("promptEmailVerfication") === "true" ? true : false

@@ -39,12 +39,10 @@ const userSchema = mongoose.Schema(
   }
 );
 
-// function to check of passwords are matching
 userSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
-// encrypt password before saving
 userSchema.pre("save", async function (next) {
   const user = this;
   if (!user.isModified("password")) {

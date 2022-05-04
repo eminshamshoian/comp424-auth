@@ -13,26 +13,14 @@ import UserListPage from "./pages/UserListPage";
 import UserEditPage from "./pages/UserEditPage";
 import ErrorPage from "./pages/ErrorPage";
 
-// for showing the 'new update available' banner and to register the service worker
-import ServiceWorkerWrapper from "./ServiceWorkerWrapper";
-
 const App = () => {
   return (
     <Router>
       <Header />
-      <ServiceWorkerWrapper />
-
       <main className='py-2'>
         <Container>
           <Switch>
             <Route path='/' component={HomePage} exact />
-            <Route path='/search/:keyword' component={HomePage} exact />
-            <Route path='/page/:pageNumber' component={HomePage} exact />
-            <Route
-              path='/search/:keyword/page/:pageNumber'
-              exact
-              component={HomePage}
-            />
             <Route path='/login' component={LoginPage} />
             <Route path='/register' component={RegisterPage} />
             <Route
