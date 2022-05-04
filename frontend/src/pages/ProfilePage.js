@@ -185,7 +185,7 @@ const ProfilePage = ({ history }) => {
 
   return (
     <Row className='mt-2'>
-      <Meta title='My Profile | Kosells' />
+      <Meta title='My Profile | COMP 424' />
       {userInfo && !userInfo.isConfirmed ? (
         <>
           {emailSent && (
