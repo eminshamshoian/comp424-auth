@@ -3,3 +3,4 @@ Authentication system built for computer science class. The stack is nodejs, rea
 
 Features:
 * Account Registration
+* Account Email Verification
