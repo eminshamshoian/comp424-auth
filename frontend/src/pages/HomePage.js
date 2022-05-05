@@ -51,7 +51,7 @@ const HomePage = () => {
       {userInfo && userInfo.isConfirmed && (
         <>
           <h1>Welcome {userInfo.name}</h1>
-          <p>you have logged in 2 times and your last login was 4/21/2022</p>
+          <p>Your last login was {new Date().toLocaleString() + ""}</p>
           <div>
             <a
               href='https://drive.google.com/file/d/178xzgYjxyF7tolCJWo__-JGfGKbu-Y_6/view?usp=sharing'
